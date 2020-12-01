@@ -72,11 +72,9 @@ fn solution2(lines: Lines<BufReader<File>>) {
 }
 
 fn main() {
-    println!("Hello, world!");
-
     // had some trouble with match statement here so just defaulted to .unwrap()
     let lines_opt = load_file("./input/1in.txt").unwrap();
 
-    //process(lines_opt);
+    //solution1(lines_opt);
     solution2(lines_opt);
 }
