@@ -1,10 +1,6 @@
 mod files;
-
-fn solution(lines: Vec<String>) {
-
-}
+mod day2;
 
 fn main() {
-    //let lines = files::get_lines("./input/3in.txt").unwrap();
-    //solution(lines);
+    //day2::run();
 }

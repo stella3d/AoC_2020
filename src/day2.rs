@@ -1,12 +1,11 @@
-mod files;
+use crate::files;
 
 struct Policy {
     pub letter: char,
-    pub min: usize,           // these names only make
-    pub max: usize            // sense in the 1st puzzle
+    pub min: usize,
+    pub max: usize
 }
 
-// all `Policy` methods go in here
 impl Policy {
     fn parse(s: &str) -> Policy {
         // this string splitting code is nasty,
@@ -71,10 +70,9 @@ fn solution(lines: Vec<String>) {
         }
     }
 
-    println!("VALID COUNT: {}", valid_count);
+    println!("day 2 - VALID COUNT: {}", valid_count);
 }
 
-fn main() {
-    let lines = files::get_lines("./input/2in.txt").unwrap();
-    solution(lines);
+pub(crate) fn run() {
+    solution(files::get_lines("./input/2in.txt").unwrap());
 }
