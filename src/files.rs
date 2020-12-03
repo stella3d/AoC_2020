@@ -20,3 +20,9 @@ pub fn get_lines(path: &str) -> Option<Vec<String>> {
         Err(_e) => None
     }
 }
+
+pub(crate) fn print_all(lines: &Vec<String>) {
+    for l in lines {
+        println!("{}", l);
+    }
+}
