@@ -13,18 +13,17 @@ fn contains_all(required: &Vec<String>, set: &FnvHashSet<String>,) -> bool {
     return true;
 }
 
-fn check_unit_range(value: &str, suffix: &str, min: i32, max: i32) -> bool {
-    if value.ends_with(suffix) {
-        let num_str = value.replace(suffix, "");
-        let n = num_str.parse::<i32>().unwrap();
-        return min <= n && n <= max;
-    }
-    false
-}
-
 fn check_bounds(value: &str, min: i32, max: i32) -> bool {
     let n = value.parse::<i32>().unwrap();
     min <= n && n <= max
+}
+
+fn check_unit_range(value: &str, suffix: &str, min: i32, max: i32) -> bool {
+    if value.ends_with(suffix) {
+        let num_str = value.replace(suffix, "");
+        return check_bounds(&num_str, min, max);
+    }
+    false
 }
 
 fn check_field(name: &str, value: &str) -> bool {
