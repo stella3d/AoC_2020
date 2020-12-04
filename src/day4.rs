@@ -122,7 +122,6 @@ fn second_solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &R
 
 pub(crate) fn run() {
     let lines = get_lines("./input/4in.txt").unwrap();
-    //print_all(&lines);
     // single capture group captures the field name
     let regex = Regex::new(r"([a-z]{3}):([a-z0-9#]*)").unwrap();
     // wanted to make this a static but had trouble creating it as 'String' instead of '&str'
