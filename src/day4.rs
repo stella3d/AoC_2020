@@ -1,8 +1,11 @@
 use crate::files::{print_all, get_lines};
 use std::collections::HashSet;
 use regex::{Regex, Captures};
+// rust's default hash algo is slower than ideal, for web security reasons - use a fast one
+use std::hash::BuildHasherDefault;
+use fnv::FnvHashSet;
 
-fn contains_all(required: &Vec<String>, set: &HashSet<String>) -> bool {
+fn contains_all(required: &Vec<String>, set: &FnvHashSet<String>,) -> bool {
     for field in required.iter() {
         if !set.contains(field) {
             return false;
@@ -64,7 +67,7 @@ fn check_field(name: &String, value: &String) -> bool {
     };
 }
 
-fn add_field_if_valid(field_set: &mut HashSet<String>, cap: Captures)  {
+fn add_field_if_valid(field_set: &mut FnvHashSet<String>, cap: Captures)  {
     let field_cap = cap[1].to_owned();
     let value_cap = cap[2].to_owned();
     if check_field(&field_cap, &value_cap) {
@@ -73,9 +76,9 @@ fn add_field_if_valid(field_set: &mut HashSet<String>, cap: Captures)  {
 }
 
 fn solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &Regex) -> i32 {
-    let mut field_set = HashSet::new();
-    let mut valid_count = 0;
+    let mut field_set = FnvHashSet::with_capacity_and_hasher(8, Default::default());
 
+    let mut valid_count = 0;
     for line in lines.iter().map(|l| l.as_str()) {
         if !line.is_empty() {
             for cap in regex.captures_iter(line) {
