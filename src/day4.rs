@@ -16,26 +16,22 @@ fn contains_all(required: &Vec<String>, set: &FnvHashSet<String>,) -> bool {
 fn check_unit_range(value: &str, suffix: &str, min: i32, max: i32) -> bool {
     if value.ends_with(suffix) {
         let num_str = value.replace(suffix, "");
-        let n = num_str.parse::<i32>().unwrap();    
+        let n = num_str.parse::<i32>().unwrap();
         return min <= n && n <= max;
     }
     false
 }
 
+fn check_bounds(value: &str, min: i32, max: i32) -> bool {
+    let n = value.parse::<i32>().unwrap();
+    min <= n && n <= max
+}
+
 fn check_field(name: &str, value: &str) -> bool {
     return match &name[..] {
-        "byr" => {
-            let n = value.parse::<i32>().unwrap();
-            1920 <= n && n <= 2002
-        },
-        "iyr" => {
-            let n = value.parse::<i32>().unwrap();
-            2010 <= n && n <= 2020
-        },
-        "eyr" => {
-            let n = value.parse::<i32>().unwrap();
-            2020 <= n && n <= 2030
-        },
+        "byr" => check_bounds(value, 1920, 2002),
+        "iyr" => check_bounds(value,2010, 2020),
+        "eyr" => check_bounds(value,2020, 2030),
         "hgt" => {
             let mut result = check_unit_range(value, "cm", 150, 193);
             if !result { result = check_unit_range(value, "in", 59, 76); }
