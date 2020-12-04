@@ -18,35 +18,32 @@ impl Terrain {
             data: vs.iter().map(|s| s.as_bytes().to_vec()).collect::<Vec<Vec<u8>>>()
         }
     }
-}
 
-fn solve(terrain: &Terrain, right_rate: usize, down_rate: usize) -> i64 {
-    let mut count = 0;
-    let mut column = 0;
-    let mut row = 0;
-    while row < terrain.data.len() {
-        if terrain.tree_at(row, column) {
-            count += 1;
+    fn solve(&self, right_rate: usize, down_rate: usize) -> i64 {
+        let mut count = 0;
+        let mut column = 0;
+        let mut row = 0;
+        while row < self.data.len() {
+            if self.tree_at(row, column) {
+                count += 1;
+            }
+            row += down_rate;
+            column += right_rate;
         }
 
-        row += down_rate;
-        column += right_rate;
+        println!("right {}, down {}, count {}", right_rate, down_rate, count);
+        return count;
     }
-
-    println!("right {}, down {}, count {}", right_rate, down_rate, count);
-    return count;
 }
 
 pub(crate) fn run() {
     let lines = files::get_lines("./input/3in.txt").unwrap();
     let terrain = Terrain::from_strings(&lines);
 
-    let mut product = 1;
-    product *= solve(&terrain, 1, 1);
-    product *= solve(&terrain, 3, 1);            // 1st problem
-    product *= solve(&terrain, 5, 1);
-    product *= solve(&terrain, 7, 1);
-    product *= solve(&terrain, 1, 2);
+    let slopes = vec![(1,1), (3,1), (5,1), (7,1), (1,2)];
+    let product = slopes.iter()
+                            .map(|s| terrain.solve(s.0, s.1))
+                            .fold(1, |acc, x| acc * x);
 
     println!("day 3 - MULTIPLIED TREE COUNT: {}", product);
 }
