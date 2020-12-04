@@ -1,6 +1,6 @@
 use crate::files::{print_all, get_lines};
 use std::collections::HashSet;
-use regex::Regex;
+use regex::{Regex, Captures};
 
 fn contains_all(required: &Vec<String>, set: &HashSet<String>) -> bool {
     for field in required.iter() {
@@ -9,33 +9,6 @@ fn contains_all(required: &Vec<String>, set: &HashSet<String>) -> bool {
         }
     }
     return true;
-}
-
-fn first_solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &Regex) -> i32 {
-    let mut field_set = HashSet::new();
-    let mut valid_count = 0;
-
-    for line in lines.iter().map(|l| l.as_str()) {
-        if !line.is_empty() {
-            for cap in regex.captures_iter(line) {
-                field_set.insert(cap[1].to_owned());
-            }
-        }
-        else {
-            if contains_all(&required_fields, &field_set) {
-                valid_count += 1;
-            }
-            field_set.clear();
-        }
-    }
-
-    // since there's no blank line at the end of the file, we'll be off by -1
-    // if this check is not included after the loop
-    if contains_all(&required_fields, &field_set) {
-        valid_count += 1;
-    }
-
-    return valid_count;
 }
 
 fn check_field(name: &String, value: &String) -> bool {
@@ -91,19 +64,24 @@ fn check_field(name: &String, value: &String) -> bool {
     };
 }
 
-// TODO - combine parts of solutions that are the same
-fn second_solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &Regex) -> i32 {
+fn add_field_if_valid(field_set: &mut HashSet<String>, cap: Captures)  {
+    let field_cap = cap[1].to_owned();
+    let value_cap = cap[2].to_owned();
+    if check_field(&field_cap, &value_cap) {
+        field_set.insert(field_cap);
+    }
+}
+
+fn solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &Regex) -> i32 {
     let mut field_set = HashSet::new();
     let mut valid_count = 0;
 
     for line in lines.iter().map(|l| l.as_str()) {
         if !line.is_empty() {
             for cap in regex.captures_iter(line) {
-                let field_cap = cap[1].to_owned();
-                let value_cap = cap[2].to_owned();
-                if check_field(&field_cap, &value_cap) {
-                    field_set.insert(field_cap);
-                }
+                // difference between part 1 & 2 is part 2 validates fields before adding to set
+                // field_set.insert(cap[1].to_owned());             // part 1
+                add_field_if_valid(&mut field_set, cap);            // part 2
             }
         }
         else {
@@ -114,18 +92,16 @@ fn second_solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &R
         }
     }
 
-    if contains_all(&required_fields, &field_set) {
-        valid_count += 1;
-    }
+    if contains_all(&required_fields, &field_set) { valid_count += 1; }
     return valid_count;
 }
 
 pub(crate) fn run() {
     let lines = get_lines("./input/4in.txt").unwrap();
-    // single capture group captures the field name
+    // 1st capture group captures the field name, 2nd group gets the value
     let regex = Regex::new(r"([a-z]{3}):([a-z0-9#]*)").unwrap();
     // wanted to make this a static but had trouble creating it as 'String' instead of '&str'
-    let required_fields: Vec<String> = vec![
+    let required_fields = vec![
         String::from("byr"),
         String::from("iyr"),
         String::from("eyr"),
@@ -135,9 +111,6 @@ pub(crate) fn run() {
         String::from("pid")
     ];
 
-    let valid_count1 = first_solution(&lines, &required_fields, &regex);
-    println!("\nday 4, part 1 - VALID COUNT: {}", valid_count1);
-
-    let valid_count2 = second_solution(&lines, &required_fields, &regex);
-    println!("\nday 4, part 2 - VALID COUNT: {}", valid_count2);
+    let valid_count = solution(&lines, &required_fields, &regex);
+    println!("\nday 4, - VALID COUNT: {}", valid_count);
 }
