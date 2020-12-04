@@ -1,3 +1,4 @@
+#[macro_use] extern crate lazy_static;
 mod files;
 mod day2;
 mod day3;
