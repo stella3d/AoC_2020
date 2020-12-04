@@ -2,7 +2,6 @@ use crate::files::{print_all, get_lines};
 use std::collections::HashSet;
 use regex::{Regex, Captures};
 // rust's default hash algo is slower than ideal, for web security reasons - use a fast one
-use std::hash::BuildHasherDefault;
 use fnv::FnvHashSet;
 
 fn contains_all(required: &Vec<String>, set: &FnvHashSet<String>,) -> bool {
@@ -14,7 +13,7 @@ fn contains_all(required: &Vec<String>, set: &FnvHashSet<String>,) -> bool {
     return true;
 }
 
-fn check_field(name: &String, value: &String) -> bool {
+fn check_field(name: &str, value: &str) -> bool {
     return match &name[..] {
         "byr" => {
             let n = value.parse::<i32>().unwrap();
@@ -46,22 +45,22 @@ fn check_field(name: &String, value: &String) -> bool {
         "hcl" => {
             // why is this the recommended pattern, wtf.  Rust get real statics please
             lazy_static! {
-                static ref color_rgx: Regex = Regex::new("^#[a-z0-9]{6}$").unwrap();
+                static ref COLOR_REGEX: Regex = Regex::new("^#[a-z0-9]{6}$").unwrap();
             }
-            color_rgx.is_match(value)
+            COLOR_REGEX.is_match(value)
         },
         "ecl" => {
             lazy_static! {
-                static ref eye_color_set: HashSet<&'static str> =
+                static ref EYE_COLOR_SET: HashSet<&'static str> =
                     ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"].iter().cloned().collect();
             }
-            eye_color_set.contains(value.as_str())
+            EYE_COLOR_SET.contains(value)
         },
         "pid" => {
             lazy_static! {
-                static ref pid_rgx: Regex = Regex::new("^[0-9]{9}$").unwrap();
+                static ref PID_REGEX: Regex = Regex::new("^[0-9]{9}$").unwrap();
             }
-            pid_rgx.is_match(value)
+            PID_REGEX.is_match(value)
         },
         &_ => { true }
     };
@@ -102,7 +101,7 @@ fn solution(lines: &Vec<String>, required_fields: &Vec<String>, regex: &Regex) -
 pub(crate) fn run() {
     let lines = get_lines("./input/4in.txt").unwrap();
     // 1st capture group captures the field name, 2nd group gets the value
-    let regex = Regex::new(r"([a-z]{3}):([a-z0-9#]*)").unwrap();
+    let field_rgx = Regex::new(r"([a-z]{3}):([a-z0-9#]*)").unwrap();
     // wanted to make this a static but had trouble creating it as 'String' instead of '&str'
     let required_fields = vec![
         String::from("byr"),
@@ -114,6 +113,6 @@ pub(crate) fn run() {
         String::from("pid")
     ];
 
-    let valid_count = solution(&lines, &required_fields, &regex);
+    let valid_count = solution(&lines, &required_fields, &field_rgx);
     println!("\nday 4, - VALID COUNT: {}", valid_count);
 }
