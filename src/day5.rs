@@ -20,22 +20,13 @@ impl BspEntry {
         let mut h_bounds = (0, 7);
         for m in &self.moves {
             match m {
-                'F' => {
-                    v_bounds.1 = (&v_bounds.0 + v_bounds.1) / 2;
-                },
-                'B' => {
-                    v_bounds.0 = ((v_bounds.0 + &v_bounds.1) / 2) + 1;
-                },
-                'L' => {
-                    h_bounds.1 = (&h_bounds.0 + h_bounds.1) / 2;
-                },
-                'R' => {
-                    h_bounds.0 = ((h_bounds.0 + &h_bounds.1) / 2) + 1;
-                },
+                'F' => { v_bounds.1 = (&v_bounds.0 + v_bounds.1) / 2 },
+                'B' => { v_bounds.0 = ((v_bounds.0 + &v_bounds.1) / 2) + 1 },
+                'L' => { h_bounds.1 = (&h_bounds.0 + h_bounds.1) / 2 },
+                'R' => { h_bounds.0 = ((h_bounds.0 + &h_bounds.1) / 2) + 1 },
                 &_ => {}
             }
         }
-
         Seat { row: v_bounds.0, column: h_bounds.0 }
     }
 }
@@ -81,7 +72,7 @@ fn solution2(lines: &Vec<String>) -> i32 {
 
     for i in 0..max_seat_id {
         if !id_set.contains(&i) {
-            // the right answer is the last one it prints
+            // the right answer is the last one it prints.
             println! ("id not in set: {}", i);
         }
     }
