@@ -68,7 +68,7 @@ pub(crate) fn run() {
     let lines = get_lines("./input/6in.txt").unwrap();
 
     let answer1 = solution(&lines);
-    println!("\nday 6, - answer 1: {}", answer2);
+    println!("\nday 6, - answer 1: {}", answer1);
 
     let answer2 = solution2(&lines);
     println!("\nday 6, - answer 2: {}", answer2);
